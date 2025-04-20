@@ -16,7 +16,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // return response
 
     const {fullname, username, email, password} = req.body
-    console.log(fullname, username, email, password);
+    // console.log("email:", email);
 
     if(
         [fullname, username,email,password].some((field) => field?.trim() === "")
@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new apiError(400, "Invalid username")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
 
@@ -43,7 +43,12 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const converImageLocalPath = req.files?.coverImage[0]?.path;
+    // const converImageLocalPath = req.files?.coverImage[0]?.path;
+
+    let converImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        converImageLocalPath = req.files.coverImage[0].path;
+    }
 
     if(!avatarLocalPath) {
         throw new apiError(400, "Avatar is required")
