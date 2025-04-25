@@ -1,6 +1,9 @@
 const asyncHandler = require("../utils/asyncHandler");
+const jwt = require('jsonwebtoken');
+const User = require('../models/user.model');
+const apiError = require('../utils/apiError');
 
-const verfifyJWT = asyncHandler(async (req, res, next) => {
+const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
     
@@ -8,7 +11,7 @@ const verfifyJWT = asyncHandler(async (req, res, next) => {
             throw new apiError(401, "Unauthorized request")
         }
     
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKKEN_SECRET)
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     
         const user = await User.findById(decodedToken?._id).select("-password -refreshToken")
     
@@ -24,5 +27,5 @@ const verfifyJWT = asyncHandler(async (req, res, next) => {
 })
 
 module.exports = {
-    verfifyJWT
+    verifyJWT
 }

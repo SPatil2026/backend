@@ -1,5 +1,4 @@
 const cloudinary = require("cloudinary").v2;
-const e = require("express");
 const fs = require("fs");
 
 cloudinary.config({
